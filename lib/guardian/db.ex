@@ -201,10 +201,10 @@ defmodule Guardian.DB do
   end
 
   @doc false
-  def repo do
+  def adapter do
     :guardian
     |> Application.fetch_env!(Guardian.DB)
-    |> Keyword.fetch!(:repo)
+    |> Keyword.fetch!(:adapter)
   end
 
   defp token_types do

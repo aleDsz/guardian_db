@@ -3,6 +3,7 @@ use Mix.Config
 config :guardian, Guardian.DB,
   issuer: "GuardianDB",
   secret_key: "HcdlxxmyDRvfrwdpjUPh2M8mWP+KtpOQK1g6fT5SHrnflSY8KiWeORqN6IZSJYTA",
+  adapter: Guardian.DB.Adapters.Ecto,
   repo: Guardian.DB.TestSupport.Repo
 
 config :guardian_db, ecto_repos: [Guardian.DB.TestSupport.Repo]

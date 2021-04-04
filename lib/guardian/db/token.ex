@@ -37,7 +37,7 @@ defmodule Guardian.DB.Token do
       |> where([token], token.jti == ^jti and token.aud == ^aud)
       |> Map.put(:prefix, prefix())
 
-    Guardian.DB.repo().one(query)
+    adapter().one(query)
   end
 
   @doc """
@@ -54,7 +54,7 @@ defmodule Guardian.DB.Token do
     |> Ecto.put_meta(prefix: prefix())
     |> cast(prepared_claims, @allowed_fields)
     |> validate_required(@required_fields)
-    |> Guardian.DB.repo().insert()
+    |> adapter().insert()
   end
 
   @doc """
@@ -66,7 +66,7 @@ defmodule Guardian.DB.Token do
 
     query_schema()
     |> where([token], token.exp < ^timestamp)
-    |> Guardian.DB.repo().delete_all(prefix: prefix())
+    |> adapter().delete_all(prefix: prefix())
   end
 
   @doc false
@@ -76,7 +76,7 @@ defmodule Guardian.DB.Token do
       |> where([token], token.sub == ^sub)
       |> Map.put(:prefix, prefix())
 
-    Guardian.DB.repo().delete_all(query)
+    adapter().delete_all(query)
   end
 
   @doc false
@@ -102,10 +102,14 @@ defmodule Guardian.DB.Token do
   def destroy_token(nil, claims, jwt), do: {:ok, {claims, jwt}}
 
   def destroy_token(model, claims, jwt) do
-    case Guardian.DB.repo().delete(model) do
+    case adapter().delete(model) do
       {:error, _} -> {:error, :could_not_revoke_token}
       nil -> {:error, :could_not_revoke_token}
       _ -> {:ok, {claims, jwt}}
     end
+  end
+
+  defp adapter do
+    Guardian.DB.adapter()
   end
 end
